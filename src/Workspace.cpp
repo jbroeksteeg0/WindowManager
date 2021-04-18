@@ -53,22 +53,19 @@ void Workspace::tile(bool grab_focus, Rect geom) {
 		(w.get_floating() ? to_float : to_tile).push_back(w);
 	}
 
-	bool has_fullscreen = false;
-
-	for (AppWindow &w: to_tile) {
+	// handle fullscreen
+	for (AppWindow &w: windows) {
 		if (w.get_fullscreen()) {
-			has_fullscreen=true;
 			w.set_border_size(0);
-			break;
+			w.move_resize(geom.offset_x, geom.offset_y, geom.width, geom.height);
+			return;
 		}
 	}
 	
-	if (!has_fullscreen) {
-		for (int i = 0; i < windows.size(); i++) {
-			windows[i].set_border_size((i == focused) * 4);
-			if (i == focused && grab_focus) {
-				windows[i].grab_focus();
-			}
+	for (int i = 0; i < windows.size(); i++) {
+		windows[i].set_border_size((i == focused) * 4);
+		if (i == focused && grab_focus) {
+			windows[i].grab_focus();
 		}
 	}
 
